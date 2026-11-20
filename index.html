@@ -5,827 +5,187 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#2a1a0e">
+<meta name="theme-color" content="#1b110a">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Kum ve Kılıç">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="icons/icon-192.png">
 <title>Kum ve Kılıç</title>
-<style>
-:root{
-  --bg:#1c120a; --panel:#2e1f12; --panel2:#3d2a18; --line:#5a3f24;
-  --text:#f3e6cf; --muted:#b9a585; --gold:#f2c14e; --red:#d9483b; --green:#5cb85c; --blue:#4f9fd9;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overscroll-behavior:none}
-body{display:flex;justify-content:center}
-#app{width:100%;max-width:480px;min-height:100%;padding:calc(12px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px}
-h1{font-size:28px;margin:8px 0 0;text-align:center;letter-spacing:1px;color:var(--gold);text-shadow:0 2px 0 #000}
-h2{font-size:18px;margin:0 0 8px;color:var(--gold)}
-.sub{text-align:center;color:var(--muted);margin:0 0 8px;font-size:14px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
-.row{display:flex;align-items:center;gap:8px}
-.between{justify-content:space-between}
-.screen{display:none;flex-direction:column;gap:12px}
-.screen.on{display:flex}
-button{font:inherit;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;font-weight:600;cursor:pointer;touch-action:manipulation}
-button:active:not(:disabled){transform:scale(.97);filter:brightness(1.2)}
-button:disabled{opacity:.4}
-.primary{background:linear-gradient(#b8452f,#8c2f1f);border-color:#d9634b}
-.gold{background:linear-gradient(#c79a2e,#94701b);border-color:#f2c14e;color:#1c120a}
-.small{padding:6px 10px;font-size:14px;border-radius:8px}
-input{font:inherit;width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#120b05;color:var(--text)}
-.stat{display:grid;grid-template-columns:1fr auto 36px 28px 36px;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid #00000033}
-.stat:last-child{border-bottom:0}
-.stat .nm{font-weight:600}
-.stat .ds{font-size:12px;color:var(--muted);font-weight:400;display:block}
-.stat .v{text-align:center;font-weight:700;font-size:18px}
-.stat button{padding:4px 0;font-size:18px}
-.bar{height:12px;background:#120b05;border-radius:6px;overflow:hidden;border:1px solid #000}
-.bar>i{display:block;height:100%;transition:width .3s}
-.hp>i{background:linear-gradient(90deg,#a32a1f,#e2584a)}
-.sta>i{background:linear-gradient(90deg,#2f6fa3,#5fb3ea)}
-.crowd>i{background:linear-gradient(90deg,#94701b,#f2c14e)}
-.xp>i{background:linear-gradient(90deg,#3c8a3c,#7fd67f)}
-.lbl{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;margin:4px 0 2px}
-#cv{width:100%;aspect-ratio:9/5;border-radius:12px;border:1px solid var(--line);display:block;background:#7a5a36}
-.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.acts button{padding:10px 4px;font-size:14px;line-height:1.2;min-height:58px}
-.acts button small{display:block;font-weight:400;font-size:11px;color:var(--muted);margin-top:2px}
-#log{font-size:13px;color:var(--muted);height:64px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
-#log div:last-child{color:var(--text)}
-.foes{display:flex;flex-direction:column;gap:8px}
-.foe{text-align:left;display:flex;justify-content:space-between;align-items:center}
-.foe b{display:block}
-.foe span{font-size:12px;color:var(--muted);font-weight:400}
-.tag{font-size:12px;padding:2px 8px;border-radius:99px;background:#120b05;border:1px solid var(--line)}
-.shop-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #00000033;gap:8px}
-.shop-item:last-child{border-bottom:0}
-.shop-item .info{font-size:12px;color:var(--muted)}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.tabs button{padding:8px 2px;font-size:13px}
-.tabs button.on{background:var(--gold);color:#1c120a}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.kv{font-size:14px;display:flex;justify-content:space-between;padding:3px 0}
-.kv span:first-child{color:var(--muted)}
-.big{font-size:40px;text-align:center;margin:8px 0}
-.center{text-align:center}
-.muted{color:var(--muted)}
-#mute{align-self:flex-end;width:34px;height:34px;padding:0;border-radius:50%;font-size:16px;margin-bottom:-6px;background:#2e1f12}
-.fighters{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.fighters .nm{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-</style>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div id="app">
-<button id="mute" aria-label="Sesi aç/kapat">🔊</button>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-coin" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19zm0 3a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zM11 8h2v8h-2z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 21l1.6-7L2 9.2l7.1-.6z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-7.6-4.6-9.6-9.3C.9 8.3 3.1 4.4 6.8 4.4c2.1 0 3.5 1.1 5.2 3 1.7-1.9 3.1-3 5.2-3 3.7 0 5.9 3.9 4.4 7.3C19.6 16.4 12 21 12 21z"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.5 2L4 14h6.5L9.5 22 20 9.5h-6.6z"/></symbol>
+  <symbol id="i-crowd" viewBox="0 0 24 24"><path d="M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20c0-3.2 2.7-5.5 6-5.5s6 2.3 6 5.5v1H2zm13.2-5.3c.3 0 .5-.1.8-.1 3.3 0 6 2.2 6 5.4v1h-6v-1c0-2-.3-3.8-.8-5.3z"/></symbol>
+  <symbol id="i-sword" viewBox="0 0 24 24"><path d="M21 2.5l-.5 4.2-8.6 8.6-3.2-3.2 8.6-8.6zM5.3 12.3l1.4-1.4 6.4 6.4-1.4 1.4-1.4-1.4-2.4 2.4.4 1.6-1.6 1.6-3.2-3.2 1.6-1.6 1.6.4 2.4-2.4z"/></symbol>
+  <symbol id="i-swords" viewBox="0 0 24 24"><path d="M3 2.5l4.2.5 6 6-2.1 2.1-6-6zm18 0l-.5 4.2-8.4 8.4-2.1-2.1 8.4-8.4zM4.2 15.3l1.4-1.4 4.5 4.5-1.4 1.4-1-1-1.9 1.9.3 1.3-1.3 1.3-2.6-2.6 1.3-1.3 1.3.3 1.9-1.9zm15.6 0l-1-1-4.5 4.5 1.4 1.4 1-1 1.9 1.9-.3 1.3 1.3 1.3 2.6-2.6-1.3-1.3-1.3.3-1.9-1.9z"/></symbol>
+  <symbol id="i-fist" viewBox="0 0 24 24"><path d="M5 21c-1.4-3.4-.4-7 2.2-9.3l1.6-5c.5-1.6 2.2-2.6 3.8-2.1l1.9.6-1.1 3.4-1.6-.5-.9 2.9c2.3-.6 4.8.1 6.5 1.8 2.4 2.4 2.4 6.2 0 8.6-1.2 1.1-2.8 1.6-4.5 1.6z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2l8.5 3.2v6.2c0 5.2-3.6 9.6-8.5 11.1-4.9-1.5-8.5-5.9-8.5-11.1V5.2z"/></symbol>
+  <symbol id="i-wind" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M3 8.5h10.5a3 3 0 1 0-3-3M3 12.5h15a3 3 0 1 1-3 3M3 16.5h7"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3 7l4.5 4L12 3.5l4.5 7.5L21 7l-1.6 10H4.6zM4.6 18.5h14.8V21H4.6z"/></symbol>
+  <symbol id="i-hammer" viewBox="0 0 24 24"><path d="M13.8 2.8l7.4 7.4-3.1 3.1-2.1-2.1-8.7 8.7a2.2 2.2 0 0 1-3.1-3.1l8.7-8.7-2.1-2.1z"/></symbol>
+  <symbol id="i-helmet" viewBox="0 0 24 24"><path d="M12 2.5c-5 0-8.5 3.6-8.5 8.4v3.8l3.3 2.4v-5.4h3.1v8.8h4.2v-8.8h3.1v5.4l3.3-2.4v-3.8c0-4.8-3.5-8.4-8.5-8.4z"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M15 4.5L7.5 12 15 19.5"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M20 12H5m6-6.5L4.5 12l6.5 6.5"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M4 12h15m-6-6.5l6.5 6.5-6.5 6.5"/></symbol>
+  <symbol id="i-rest" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M3 10c3 0 3-3 6-3s3 3 6 3 3-3 6-3M3 16.5c3 0 3-3 6-3s3 3 6 3 3-3 6-3"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2c1 4.2 6.5 6.4 6.5 12.3a6.5 6.5 0 0 1-13 0c0-3.2 2-5.3 3.2-7.3 0 2.2 1 3.4 2.3 3.6C10.6 7.4 10.8 4.8 12 2z"/></symbol>
+  <symbol id="i-burst" viewBox="0 0 24 24"><path d="M12 1.5l2.2 6.3 6.6-1.7-4.4 5.2 4.9 4.6-6.6-.4-1 6.7-2.9-6-5.9 3 1.9-6.4L1 9.7l6.6-1.3z"/></symbol>
+  <symbol id="i-vol" viewBox="0 0 24 24"><path d="M3.5 9v6h4l5.5 4.5v-15L7.5 9zm13.3-2.4a7.4 7.4 0 0 1 0 10.8l-1.5-1.5a5.3 5.3 0 0 0 0-7.8zm-2.6 2.7a3.6 3.6 0 0 1 0 5.4l-1.4-1.5a1.6 1.6 0 0 0 0-2.4z"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M3.5 9v6h4l5.5 4.5v-15L7.5 9zm12.1.1l1.4-1.4 2.3 2.3 2.3-2.3 1.4 1.4-2.3 2.3 2.3 2.3-1.4 1.4-2.3-2.3-2.3 2.3-1.4-1.4 2.3-2.3z"/></symbol>
+  <symbol id="i-dice" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm2 3.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-4 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-4 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zm-8 9c0-4 3.6-6.8 8-6.8s8 2.8 8 6.8v1H4z"/></symbol>
+  <symbol id="i-arena" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 9c0-2.5 4.5-4.5 10-4.5S22 6.5 22 9v8.5c0 1.8-4.5 3-10 3s-10-1.2-10-3zm3 3.2v3.6h2.2v-3.4zm4.4.5v3.5h2.2v-3.5zm4.4 0v3.5H16v-3.5zm4.4-.5v3.4H19v-3.6z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.5l5 5 10-11"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7 10V7.5a5 5 0 0 1 10 0V10h1.5v11h-13V10zm2.5 0h5V7.5a2.5 2.5 0 0 0-5 0z"/></symbol>
+</svg>
 
-<!-- BAŞLANGIÇ -->
+<button id="mute" class="btn icon" aria-label="Sesi aç/kapat"><svg class="ic"><use href="#i-vol"/></svg></button>
+<div id="fade"></div>
+
+<div id="app">
+
+<!-- BAŞLIK -->
 <section class="screen" id="s-title">
-  <h1>⚔️ Kum ve Kılıç</h1>
-  <p class="sub">Arenanın kumunda adını efsaneye yaz.</p>
-  <div class="card center">
-    <p class="muted" style="margin-top:0">Esir düştün. Özgürlüğün tek yolu arenada kazanmak.</p>
-    <button class="primary" style="width:100%" onclick="go('create')">Yeni Gladyatör</button>
-    <div style="height:8px"></div>
-    <button id="btnContinue" style="width:100%" onclick="continueGame()">Devam Et</button>
+  <div class="title-art">
+    <canvas id="cvTitle" class="scene"></canvas>
+    <h1 class="logo">Kum<small>ve</small>Kılıç</h1>
+  </div>
+  <div class="panel">
+    <p class="lore">Esir düştün. Özgürlüğün tek yolu, kalabalığın önünde kanla ve kumla kazanmak.</p>
+    <div class="stack">
+      <button class="btn primary big" onclick="go('create')">Yeni Gladyatör</button>
+      <button class="btn" id="btnContinue" onclick="continueGame()">Devam Et</button>
+    </div>
   </div>
 </section>
 
 <!-- KARAKTER OLUŞTUR -->
 <section class="screen" id="s-create">
-  <h1>Gladyatörünü Yarat</h1>
-  <div class="card">
-    <h2>İsim</h2>
-    <input id="nameIn" maxlength="14" placeholder="Örn. Demirpençe">
+  <div class="bar"><button class="btn icon ghost" onclick="go('title')" aria-label="Geri"><svg class="ic"><use href="#i-back"/></svg></button><h2 class="ttl">Gladyatörünü Yarat</h2></div>
+  <div class="sticky">
+    <canvas id="cvCreate" class="scene doll"></canvas>
+    <div class="derived" id="cDerived"></div>
   </div>
-  <div class="card">
-    <div class="row between"><h2 style="margin:0">Özellikler</h2><span class="tag">Kalan puan: <b id="cPts">0</b></span></div>
-    <div id="cStats"></div>
+  <input id="nameIn" class="field" maxlength="14" placeholder="Gladyatörünün adı" autocomplete="off">
+  <div class="seg" id="cTabs">
+    <button class="on" data-t="stats">Özellikler <span class="badge" id="cPts">0</span></button>
+    <button data-t="look">Görünüm</button>
   </div>
-  <button class="primary" onclick="finishCreate()">Arenaya Gir</button>
+  <div class="panel" id="cStatsP"><div id="cStats"></div></div>
+  <div class="panel" id="cLookP" hidden><div id="cLook"></div></div>
+  <button class="btn primary big" onclick="finishCreate()">Arenaya Gir</button>
 </section>
 
-<!-- MERKEZ -->
-<section class="screen" id="s-hub">
-  <div class="card">
-    <div class="row between">
-      <div><b id="hName" style="font-size:20px"></b><div class="muted" style="font-size:13px" id="hTitle"></div></div>
-      <div class="center"><div class="tag">Sv. <b id="hLvl"></b></div><div style="margin-top:4px;color:var(--gold);font-weight:700">🪙 <span id="hGold"></span></div></div>
-    </div>
-    <div class="lbl"><span>Tecrübe</span><span id="hXpT"></span></div>
-    <div class="bar xp"><i id="hXp"></i></div>
-    <div class="grid2" style="margin-top:10px">
-      <div class="kv"><span>Galibiyet</span><span id="hW"></span></div>
-      <div class="kv"><span>Mağlubiyet</span><span id="hL"></span></div>
-    </div>
+<!-- ŞEHİR -->
+<section class="screen" id="s-city">
+  <div class="panel hud">
+    <div class="hud-id"><b id="hName"></b><small id="hTitle"></small></div>
+    <div class="hud-res"><span class="chip">Sv. <b id="hLvl"></b></span><span class="chip gold"><svg class="ic"><use href="#i-coin"/></svg><b id="hGold"></b></span></div>
+    <div class="meter xp"><i class="fl" id="hXp"></i></div>
   </div>
-  <button class="primary" style="font-size:18px;padding:16px" onclick="openArena()">🏟️ Arenaya Çık</button>
-  <div class="grid2">
-    <button onclick="openTrain()" id="btnTrain">💪 Antrenman</button>
-    <button onclick="openShop()">🛒 Demirci</button>
+  <div class="city-wrap">
+    <canvas id="cvCity" class="scene"></canvas>
+    <div class="city-hint" id="cityHint">Gitmek istediğin yere dokun</div>
   </div>
-  <div class="card">
-    <h2>Teçhizat</h2>
-    <div id="hEquip"></div>
+  <div class="dock">
+    <button class="btn" onclick="cityGo('char')"><svg class="ic"><use href="#i-user"/></svg>Gladyatör</button>
+    <button class="btn" onclick="cityGo('train')"><svg class="ic"><use href="#i-fist"/></svg>Antrenman<span class="badge" id="hPts" hidden></span></button>
+    <button class="btn" onclick="cityGo('arena')"><svg class="ic"><use href="#i-arena"/></svg>Arena</button>
   </div>
-  <div class="card">
-    <h2>Özellikler</h2>
-    <div id="hStats"></div>
-  </div>
-  <button class="small" onclick="resetGame()" style="align-self:center;background:none;border:0;color:var(--muted)">Oyunu sıfırla</button>
+</section>
+
+<!-- GLADYATÖR -->
+<section class="screen" id="s-char">
+  <div class="bar"><button class="btn icon ghost" onclick="toCity()" aria-label="Geri"><svg class="ic"><use href="#i-back"/></svg></button><h2 class="ttl" id="chName"></h2></div>
+  <canvas id="cvChar" class="scene doll"></canvas>
+  <div class="panel tight"><div class="lbl"><span id="chTitle"></span><span id="chXpT"></span></div><div class="meter xp"><i class="fl" id="chXp"></i></div></div>
+  <div class="panel"><h3>Özellikler</h3><div id="chStats"></div></div>
+  <div class="panel"><h3>Teçhizat</h3><div id="chEquip"></div></div>
+  <div class="panel"><h3>Kayıt</h3><div id="chRec"></div></div>
+  <button class="btn ghost sm" onclick="resetGame()" style="align-self:center">Oyunu sıfırla</button>
 </section>
 
 <!-- ANTRENMAN -->
 <section class="screen" id="s-train">
-  <h1>Antrenman</h1>
-  <div class="card">
-    <div class="row between"><h2 style="margin:0">Özellik Puanları</h2><span class="tag">Kalan: <b id="tPts">0</b></span></div>
-    <div id="tStats"></div>
+  <div class="bar"><button class="btn icon ghost" onclick="toCity()" aria-label="Geri"><svg class="ic"><use href="#i-back"/></svg></button><h2 class="ttl">Antrenman Alanı</h2><span class="badge" id="tPts">0</span></div>
+  <div class="sticky">
+    <canvas id="cvTrain" class="scene doll"></canvas>
+    <div class="derived" id="tDerived"></div>
   </div>
-  <button class="primary" onclick="confirmTrain()">Tamam</button>
+  <div class="panel"><div id="tStats"></div></div>
+  <p class="center dim" id="tNote" style="margin:0;font-size:13px"></p>
+  <button class="btn primary big" onclick="confirmTrain()">Kaydet</button>
 </section>
 
 <!-- DÜKKAN -->
 <section class="screen" id="s-shop">
-  <div class="row between"><h1 style="margin:0">Demirci</h1><span style="color:var(--gold);font-weight:700">🪙 <span id="sGold"></span></span></div>
+  <div class="bar"><button class="btn icon ghost" onclick="toCity()" aria-label="Geri"><svg class="ic"><use href="#i-back"/></svg></button><h2 class="ttl" id="sTitle"></h2><span class="chip gold"><svg class="ic"><use href="#i-coin"/></svg><b id="sGold"></b></span></div>
+  <canvas id="cvShop" class="scene"></canvas>
+  <div class="speech" id="sSpeech"></div>
   <div class="tabs" id="sTabs"></div>
-  <div class="card" id="sList"></div>
-  <button onclick="go('hub')">Geri</button>
+  <div class="items" id="sList"></div>
 </section>
 
-<!-- RAKİP SEÇ -->
+<!-- ARENA KAPISI -->
 <section class="screen" id="s-arena">
-  <h1>Rakibini Seç</h1>
-  <p class="sub">Zor rakip, büyük ödül.</p>
-  <div class="foes" id="foes"></div>
-  <button onclick="go('hub')">Geri</button>
+  <div class="bar"><button class="btn icon ghost" onclick="toCity()" aria-label="Geri"><svg class="ic"><use href="#i-back"/></svg></button><h2 class="ttl">Arena Kapısı</h2></div>
+  <canvas id="cvGate" class="scene"></canvas>
+  <p class="lore" style="margin:0">Kalabalık uğulduyor. Rakibini seç: zor rakip, büyük ödül.</p>
+  <div class="items" id="foes"></div>
 </section>
 
 <!-- DÖVÜŞ -->
 <section class="screen" id="s-fight">
-  <div class="fighters">
-    <div>
-      <div class="nm" id="fPN"></div>
-      <div class="lbl"><span>Can</span><span id="fPHt"></span></div><div class="bar hp"><i id="fPH"></i></div>
-      <div class="lbl"><span>Enerji</span><span id="fPSt"></span></div><div class="bar sta"><i id="fPS"></i></div>
-    </div>
-    <div>
-      <div class="nm" id="fEN" style="text-align:right"></div>
-      <div class="lbl"><span>Can</span><span id="fEHt"></span></div><div class="bar hp"><i id="fEH"></i></div>
-      <div class="lbl"><span>Enerji</span><span id="fESt"></span></div><div class="bar sta"><i id="fES"></i></div>
-    </div>
+  <div class="plates">
+    <div class="plate"><div class="nm" id="fPN"></div>
+      <div class="lbl"><span>Can</span><span id="fPHt"></span></div>
+      <div class="meter hp"><i class="gh" id="fPHg"></i><i class="fl" id="fPH"></i></div>
+      <div class="meter sta"><i class="fl" id="fPS"></i></div></div>
+    <div class="plate r"><div class="nm" id="fEN"></div>
+      <div class="lbl"><span>Can</span><span id="fEHt"></span></div>
+      <div class="meter hp"><i class="gh" id="fEHg"></i><i class="fl" id="fEH"></i></div>
+      <div class="meter sta"><i class="fl" id="fES"></i></div></div>
   </div>
-  <canvas id="cv"></canvas>
-  <div>
-    <div class="lbl"><span>📣 Seyirci coşkusu</span><span id="fCt"></span></div>
-    <div class="bar crowd"><i id="fC"></i></div>
-  </div>
+  <canvas id="cvFight" class="scene"></canvas>
+  <div><div class="lbl"><span><svg class="ic s"><use href="#i-crowd"/></svg> Seyirci coşkusu</span><span id="fCt"></span></div><div class="meter crowd"><i class="fl" id="fC"></i></div></div>
   <div id="log"></div>
   <div class="acts" id="acts">
-    <button data-a="back">⬅️ Geri<small>-4 enerji</small></button>
-    <button data-a="rest">😮‍💨 Nefeslen<small>+enerji</small></button>
-    <button data-a="fwd">➡️ İlerle<small>-4 enerji</small></button>
-    <button data-a="quick">🗡️ Hızlı<small></small></button>
-    <button data-a="normal">⚔️ Normal<small></small></button>
-    <button data-a="power">💥 Güçlü<small></small></button>
-    <button data-a="taunt" style="grid-column:span 3;min-height:44px">😤 Alay Et <small style="display:inline">(karizma)</small></button>
+    <button class="btn" data-a="back"><svg class="ic"><use href="#i-left"/></svg>Geri<small>-4 enerji</small></button>
+    <button class="btn" data-a="rest"><svg class="ic"><use href="#i-rest"/></svg>Nefeslen<small>+enerji</small></button>
+    <button class="btn" data-a="fwd"><svg class="ic"><use href="#i-right"/></svg>İlerle<small>-4 enerji</small></button>
+    <button class="btn atk" data-a="quick"><svg class="ic"><use href="#i-sword"/></svg>Hızlı<small></small></button>
+    <button class="btn atk" data-a="normal"><svg class="ic"><use href="#i-swords"/></svg>Normal<small></small></button>
+    <button class="btn atk" data-a="power"><svg class="ic"><use href="#i-burst"/></svg>Güçlü<small></small></button>
+    <button class="btn wide" data-a="taunt"><svg class="ic"><use href="#i-flame"/></svg>Alay Et <small>karizma</small></button>
   </div>
 </section>
 
 <!-- SONUÇ -->
 <section class="screen" id="s-result">
-  <div class="big" id="rIcon"></div>
-  <h1 id="rTitle"></h1>
-  <div class="card" id="rBody"></div>
-  <button class="primary" onclick="go('hub')">Devam</button>
+  <canvas id="cvResult" class="scene"></canvas>
+  <div class="res-title" id="rTitle"></div>
+  <div class="panel" id="rBody"></div>
+  <button class="btn primary big" onclick="toCity()">Şehre Dön</button>
 </section>
 
 </div>
-<script>
-"use strict";
-// ---------- VERİ ----------
-const STATS = [
-  ['str','Güç','Vuruş hasarı'],
-  ['atk','Saldırı','İsabet şansı'],
-  ['def','Savunma','Hasar azaltma'],
-  ['agi','Çeviklik','Kaçınma ve enerji'],
-  ['vit','Dayanıklılık','Can ve enerji'],
-  ['cha','Karizma','Alay ve seyirci'],
-];
-const ITEMS = {
-  weapon:{label:'Silah', list:[
-    {n:'Paslı Kısa Kılıç',v:3,c:0,col:'#8a7a6a'},
-    {n:'Tunç Kılıç',v:6,c:120,col:'#c08a4a'},
-    {n:'Demir Mızrak',v:9,c:320,col:'#a8b0b8'},
-    {n:'Çift Ağızlı Balta',v:13,c:700,col:'#cfd6dc'},
-    {n:'Kara Çelik Kılıç',v:18,c:1400,col:'#555a66'},
-    {n:'Şafak Kılıcı',v:24,c:2600,col:'#f2c14e'},
-  ]},
-  armor:{label:'Zırh', list:[
-    {n:'Keten Tunik',v:0,c:0,col:'#9b8a6a'},
-    {n:'Deri Zırh',v:3,c:100,col:'#7a4a24'},
-    {n:'Zincir Zırh',v:6,c:300,col:'#8f979e'},
-    {n:'Pul Zırh',v:9,c:650,col:'#6f8a7a'},
-    {n:'Plaka Zırh',v:13,c:1300,col:'#c9ced4'},
-  ]},
-  helmet:{label:'Miğfer', list:[
-    {n:'Yok',v:0,c:0,col:null},
-    {n:'Deri Başlık',v:1,c:60,col:'#7a4a24'},
-    {n:'Tunç Miğfer',v:3,c:220,col:'#c08a4a'},
-    {n:'Demir Miğfer',v:5,c:520,col:'#a8b0b8'},
-    {n:'Şampiyon Miğferi',v:8,c:1150,col:'#f2c14e'},
-  ]},
-  shield:{label:'Kalkan', list:[
-    {n:'Yok',v:0,c:0,col:null},
-    {n:'Ahşap Kalkan',v:2,c:80,col:'#8a5a2a'},
-    {n:'Tunç Kalkan',v:4,c:260,col:'#c08a4a'},
-    {n:'Kule Kalkanı',v:7,c:720,col:'#8f979e'},
-  ]},
-};
-const SLOTS = ['weapon','armor','helmet','shield'];
-const NAMES = ['Kemikkıran','Kızıl Boğa','Sessiz Yılan','Taşyumruk','Gölge','Demir Ayı','Kurtdişi','Akrep','Yaralı Kartal','Tunç Dev','Kum Fırtınası','Boynuz','Kara Tilki','Çelikkol','Yabanöfke','Kuzgun','Dağ Aslanı','Zehirli Diken'];
-const ARCH = {
-  'Kaba Kuvvet':{str:3,vit:2,atk:1,def:1,agi:0.5,cha:0.5},
-  'Düellocu':{atk:3,agi:2.5,str:1.5,def:0.5,vit:1,cha:1},
-  'Kale':{def:3,vit:3,str:1.5,atk:1,agi:0.3,cha:0.2},
-  'Şovmen':{cha:3,agi:2,atk:1.5,str:1.5,def:1,vit:1},
-};
-const TITLES = ['Esir','Acemi','Kum Savaşçısı','Arena Kurdu','Kalabalığın Gözdesi','Şampiyon Adayı','Arena Efsanesi'];
-const SAVE_KEY = 'kumVeKilic_v1';
-const START_PTS = 10, ARENA_LEN = 9;
-
-let P = null;          // oyuncu kalıcı verisi
-let draft = null;      // oluşturma/antrenman taslağı
-
-// ---------- YARDIMCI ----------
-const $ = id => document.getElementById(id);
-const rnd = (a,b) => a + Math.random()*(b-a);
-const ri = (a,b) => Math.floor(rnd(a,b+1));
-const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
-const sleep = ms => new Promise(r=>setTimeout(r,ms));
-const pick = a => a[Math.floor(Math.random()*a.length)];
-
-// ---------- SES (Web Audio ile sentezlenir, dosya gerekmez) ----------
-const SFX = (()=>{
-  let ac=null, master=null, noiseBuf=null, muted=false;
-  try{ muted = localStorage.getItem('kvk_mute')==='1'; }catch(e){}
-  function init(){
-    if(ac){ if(ac.state==='suspended') ac.resume(); return; }
-    const C = window.AudioContext || window.webkitAudioContext; if(!C) return;
-    ac = new C(); master = ac.createGain(); master.gain.value = muted?0:0.6; master.connect(ac.destination);
-    noiseBuf = ac.createBuffer(1, ac.sampleRate*2, ac.sampleRate);
-    const d = noiseBuf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
-  }
-  function tone(freq, dur, {type='sine', vol=0.3, slide=0, delay=0}={}){
-    const t=ac.currentTime+delay, o=ac.createOscillator(), g=ac.createGain();
-    o.type=type; o.frequency.setValueAtTime(freq,t);
-    if(slide) o.frequency.exponentialRampToValueAtTime(Math.max(20,freq+slide), t+dur);
-    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+0.05);
-  }
-  function noise(dur, {vol=0.3, freq=1000, q=1, type='bandpass', delay=0, attack=0.005, sweep=0}={}){
-    const t=ac.currentTime+delay, s=ac.createBufferSource(), f=ac.createBiquadFilter(), g=ac.createGain();
-    s.buffer=noiseBuf; f.type=type; f.Q.value=q; f.frequency.setValueAtTime(freq,t);
-    if(sweep) f.frequency.exponentialRampToValueAtTime(Math.max(50,freq+sweep), t+dur);
-    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+attack); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    s.connect(f); f.connect(g); g.connect(master); s.start(t, Math.random()); s.stop(t+dur+0.05);
-  }
-  const fx = {
-    click(){ tone(620,0.05,{type:'square',vol:0.04}); },
-    swing(){ noise(0.18,{freq:700,sweep:2600,q:2,vol:0.25}); },
-    hit(){ noise(0.12,{freq:450,q:0.8,vol:0.5,type:'lowpass'}); tone(150,0.15,{type:'triangle',vol:0.4,slide:-90}); },
-    clang(){ tone(1850,0.4,{type:'square',vol:0.05}); tone(2700,0.35,{vol:0.08}); noise(0.08,{freq:3200,vol:0.25}); },
-    heavy(){ noise(0.28,{freq:260,type:'lowpass',vol:0.75}); tone(95,0.32,{vol:0.6,slide:-55}); },
-    crit(){ fx.heavy(); tone(900,0.45,{type:'sawtooth',vol:0.08,slide:-500,delay:0.03}); },
-    miss(){ noise(0.25,{freq:1600,sweep:-1100,q:3,vol:0.16}); },
-    step(){ noise(0.07,{freq:320,type:'lowpass',vol:0.28}); noise(0.06,{freq:300,type:'lowpass',vol:0.2,delay:0.13}); },
-    rest(){ noise(0.7,{freq:650,q:0.7,vol:0.12,attack:0.25,sweep:-350}); },
-    taunt(){ tone(300,0.12,{type:'sawtooth',vol:0.09,slide:160}); tone(460,0.16,{type:'sawtooth',vol:0.09,slide:-220,delay:0.12}); },
-    cheer(a=1){ noise(0.5+1.3*a,{freq:1250,q:0.5,vol:0.1+0.14*a,attack:0.15});
-      for(let i=0;i<Math.round(5*a);i++) tone(rnd(500,950),0.16,{type:'triangle',vol:0.03,slide:rnd(100,350),delay:rnd(0,0.9)}); },
-    boo(){ for(let i=0;i<6;i++) tone(rnd(105,170),0.9,{type:'sawtooth',vol:0.025,slide:-40,delay:rnd(0,0.25)}); },
-    coin(){ tone(988,0.08,{type:'square',vol:0.07}); tone(1319,0.28,{type:'square',vol:0.07,delay:0.08}); },
-    win(){ [523,659,784,1047].forEach((f,i)=>tone(f,i===3?0.7:0.18,{type:'square',vol:0.08,delay:i*0.15})); fx.cheer(1.4); },
-    lose(){ [392,349,311,262].forEach((f,i)=>tone(f,0.4,{type:'triangle',vol:0.15,delay:i*0.3})); },
-    levelup(){ [523,659,784,1047,1319].forEach((f,i)=>tone(f,0.16,{type:'triangle',vol:0.12,delay:0.9+i*0.08})); },
-    gong(){ tone(110,2.2,{vol:0.4}); tone(166,1.7,{vol:0.15}); tone(277,1.2,{type:'triangle',vol:0.05}); noise(0.3,{freq:220,type:'lowpass',vol:0.3}); },
-  };
-  return {
-    init,
-    play(n,...args){ if(!ac || muted) return; try{ fx[n](...args); }catch(e){ console.warn('ses hatası:', n, e); } },
-    toggle(){ muted=!muted; try{ localStorage.setItem('kvk_mute', muted?'1':'0'); }catch(e){} if(master) master.gain.value = muted?0:0.6; return muted; },
-    get muted(){ return muted; },
-  };
-})();
-const buzz = ms => { try{ if(!SFX.muted && navigator.vibrate) navigator.vibrate(ms); }catch(e){} };
-document.addEventListener('pointerdown', SFX.init);
-const muteBtn = document.getElementById('mute');
-muteBtn.textContent = SFX.muted ? '🔇' : '🔊';
-muteBtn.onclick = () => { SFX.init(); muteBtn.textContent = SFX.toggle() ? '🔇' : '🔊'; SFX.play('click'); };
-document.addEventListener('click', e=>{ if(e.target.closest('button:not(#acts button):not(#mute)')) SFX.play('click'); });
-
-function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(P)); }catch(e){} }
-function load(){ try{ const s=localStorage.getItem(SAVE_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
-
-function go(name){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
-  $('s-'+name).classList.add('on');
-  window.scrollTo(0,0);
-  if(name==='hub') renderHub();
-}
-
-// ---------- TÜRETİLMİŞ DEĞERLER ----------
-const item = (f,slot) => ITEMS[slot].list[f.eq[slot]];
-const maxHp  = f => 50 + f.vit*10 + f.level*5;
-const maxSta = f => 60 + f.agi*3 + f.vit*2;
-const armorOf = f => item(f,'armor').v + item(f,'helmet').v + item(f,'shield').v;
-const xpNeed = lvl => 80 + lvl*60;
-const titleOf = f => TITLES[Math.min(TITLES.length-1, Math.floor((f.level-1)/2))];
-
-// ---------- KARAKTER OLUŞTURMA ----------
-function newDraft(base, pts){ return {base:{...base}, cur:{...base}, pts}; }
-function renderStatEditor(el, d, ptsEl){
-  el.innerHTML = STATS.map(([k,n,ds])=>`
-    <div class="stat">
-      <div class="nm">${n}<span class="ds">${ds}</span></div><div></div>
-      <button data-k="${k}" data-d="-1" ${d.cur[k]<=d.base[k]?'disabled':''}>−</button>
-      <div class="v">${d.cur[k]}</div>
-      <button data-k="${k}" data-d="1" ${d.pts<=0?'disabled':''}>+</button>
-    </div>`).join('');
-  ptsEl.textContent = d.pts;
-  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{
-    const k=b.dataset.k, dd=+b.dataset.d;
-    if(dd>0 && d.pts>0){d.cur[k]++; d.pts--;}
-    if(dd<0 && d.cur[k]>d.base[k]){d.cur[k]--; d.pts++;}
-    renderStatEditor(el,d,ptsEl);
-  });
-}
-function startCreate(){
-  draft = newDraft({str:1,atk:1,def:1,agi:1,vit:1,cha:1}, START_PTS);
-  renderStatEditor($('cStats'), draft, $('cPts'));
-}
-function finishCreate(){
-  const name = $('nameIn').value.trim() || 'İsimsiz';
-  if(draft.pts>0 && !confirm(`${draft.pts} puan harcanmadı. Yine de devam edilsin mi?`)) return;
-  P = {name, level:1, xp:0, gold:50, pts:0, wins:0, losses:0, ...draft.cur,
-       eq:{weapon:0,armor:0,helmet:0,shield:0}, champion:false};
-  save(); go('hub');
-}
-
-// ---------- MERKEZ ----------
-function renderHub(){
-  $('hName').textContent = P.name;
-  $('hTitle').textContent = titleOf(P) + (P.champion?' 👑':'');
-  $('hLvl').textContent = P.level;
-  $('hGold').textContent = P.gold;
-  $('hXpT').textContent = `${P.xp} / ${xpNeed(P.level)}`;
-  $('hXp').style.width = (100*P.xp/xpNeed(P.level))+'%';
-  $('hW').textContent = P.wins; $('hL').textContent = P.losses;
-  $('btnTrain').textContent = P.pts>0 ? `💪 Antrenman (${P.pts})` : '💪 Antrenman';
-  $('btnTrain').className = P.pts>0 ? 'gold' : '';
-  $('hEquip').innerHTML = SLOTS.map(s=>`<div class="kv"><span>${ITEMS[s].label}</span><span>${item(P,s).n}${item(P,s).v?` (+${item(P,s).v})`:''}</span></div>`).join('');
-  $('hStats').innerHTML = STATS.map(([k,n])=>`<div class="kv"><span>${n}</span><span>${P[k]}</span></div>`).join('') +
-    `<div class="kv"><span>Can / Enerji</span><span>${maxHp(P)} / ${maxSta(P)}</span></div>`;
-}
-function openTrain(){
-  const base={}; STATS.forEach(([k])=>base[k]=P[k]);
-  draft = newDraft(base, P.pts);
-  renderStatEditor($('tStats'), draft, $('tPts'));
-  go('train');
-}
-function confirmTrain(){
-  Object.assign(P, draft.cur); P.pts = draft.pts; save(); go('hub');
-}
-
-// ---------- DÜKKAN ----------
-let shopTab='weapon';
-function openShop(){ renderShop(); go('shop'); }
-function renderShop(){
-  $('sGold').textContent = P.gold;
-  $('sTabs').innerHTML = SLOTS.map(s=>`<button class="${s===shopTab?'on':''}" data-s="${s}">${ITEMS[s].label}</button>`).join('');
-  $('sTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{shopTab=b.dataset.s;renderShop();});
-  const cur = P.eq[shopTab], unit = shopTab==='weapon'?'hasar':'zırh';
-  $('sList').innerHTML = ITEMS[shopTab].list.map((it,i)=>{
-    if(i===0 && it.c===0 && it.v===0) return '';
-    let btn;
-    if(i===cur) btn = `<span class="tag">Kuşanıldı</span>`;
-    else if(i<cur) btn = `<span class="tag muted">Eski</span>`;
-    else btn = `<button class="small ${P.gold>=it.c?'gold':''}" data-i="${i}" ${P.gold<it.c?'disabled':''}>🪙 ${it.c}</button>`;
-    return `<div class="shop-item"><div><b>${it.n}</b><div class="info">+${it.v} ${unit}</div></div>${btn}</div>`;
-  }).join('');
-  $('sList').querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>{
-    const i=+b.dataset.i, it=ITEMS[shopTab].list[i];
-    if(P.gold<it.c) return;
-    // eski eşyanın %30'u geri verilir
-    const old = ITEMS[shopTab].list[P.eq[shopTab]];
-    P.gold -= it.c; P.gold += Math.floor(old.c*0.3);
-    P.eq[shopTab]=i; save(); SFX.play('coin'); renderShop();
-  });
-}
-
-// ---------- RAKİP ÜRETME ----------
-function makeEnemy(lvl, boss){
-  const archName = boss ? 'Şampiyon' : pick(Object.keys(ARCH));
-  const w = boss ? {str:2,atk:2,def:2,agi:2,vit:2,cha:1} : ARCH[archName];
-  const e = {name: boss?'Altın Pençe Varro':pick(NAMES), arch:archName, level:lvl,
-             str:1,atk:1,def:1,agi:1,vit:1,cha:1, eq:{}};
-  let pts = START_PTS + (lvl-1)*3 + (boss?6:0);
-  const keys=Object.keys(w), tot=keys.reduce((s,k)=>s+w[k],0);
-  while(pts-->0){ let r=Math.random()*tot; for(const k of keys){ r-=w[k]; if(r<=0){e[k]++;break;} } }
-  const tier = (slot, div) => clamp(Math.floor((lvl-1+rnd(-1,1))/div), 0, ITEMS[slot].list.length-1);
-  e.eq = {weapon:tier('weapon',2.4), armor:tier('armor',2.8), helmet:tier('helmet',3), shield: archName==='Kale'||boss ? clamp(tier('shield',3)+1,0,3) : tier('shield',4)};
-  if(boss){ e.eq={weapon:4,armor:4,helmet:4,shield:3}; }
-  return e;
-}
-let foeList=[];
-function openArena(){
-  const L=P.level;
-  foeList = [
-    {e:makeEnemy(Math.max(1,L-1)), diff:'Kolay', mult:0.7},
-    {e:makeEnemy(L), diff:'Orta', mult:1},
-    {e:makeEnemy(L+2), diff:'Zor', mult:1.6},
-  ];
-  if(L>=10 && !P.champion) foeList.push({e:makeEnemy(L+3,true), diff:'ŞAMPİYONLUK', mult:4});
-  $('foes').innerHTML = foeList.map((f,i)=>{
-    const gold = Math.round((30+f.e.level*18)*f.mult), xp=Math.round((30+f.e.level*12)*f.mult);
-    f.gold=gold; f.xp=xp;
-    return `<button class="foe ${f.diff==='ŞAMPİYONLUK'?'gold':''}" data-i="${i}">
-      <div><b>${f.e.name}</b><span>Sv.${f.e.level} · ${f.e.arch} · ${item(f.e,'weapon').n}</span></div>
-      <div style="text-align:right"><div class="tag">${f.diff}</div><span>🪙${gold} · ✨${xp}</span></div></button>`;
-  }).join('');
-  $('foes').querySelectorAll('button').forEach(b=>b.onclick=()=>startFight(foeList[+b.dataset.i]));
-  go('arena');
-}
-
-// ---------- DÖVÜŞ ----------
-let F = null; // aktif dövüş
-function fighter(src, pos, dir, isPlayer){
-  return {src, name:src.name, pos, rx:pos, dir, isPlayer,
-    hp:maxHp(src), mhp:maxHp(src), sta:maxSta(src), msta:maxSta(src),
-    lunge:0, flash:0, angry:0, dead:false, fall:0};
-}
-function startFight(foe){
-  F = {foe, p:fighter(P,1,1,true), e:fighter(foe.e,ARENA_LEN-2,-1,false),
-       crowd:30, busy:false, over:false, texts:[], parts:[], shake:0, sflash:0, turn:0};
-  SFX.play('gong'); setTimeout(()=>SFX.play('cheer',0.6), 300);
-  $('log').innerHTML='';
-  $('fPN').textContent = P.name;
-  $('fEN').textContent = `${foe.e.name} (Sv.${foe.e.level})`;
-  log(`${foe.e.name} arenaya çıktı! Seyirci bağırıyor!`);
-  go('fight'); resizeCanvas(); updateFightUI();
-}
-const dist = () => Math.abs(F.p.pos - F.e.pos);
-const COST = {quick:8, normal:16, power:28, move:4};
-function hitChance(a, d, kind){
-  const mod = {quick:12, normal:0, power:-18}[kind];
-  let c = 72 + (a.src.atk - d.src.agi)*3 + mod - (a.angry?10:0);
-  if(a.sta < COST[kind]) c -= 25;
-  return clamp(Math.round(c), 8, 96);
-}
-function baseDmg(a, kind){
-  const m = {quick:0.6, normal:1, power:1.75}[kind];
-  return (item(a.src,'weapon').v + a.src.str*2.2) * m;
-}
-function log(t){
-  const d=document.createElement('div'); d.textContent=t; $('log').appendChild(d);
-  while($('log').children.length>4) $('log').firstChild.remove();
-}
-function floatText(f, text, color){
-  F.texts.push({x:cellX(f.rx), y:110, text, color, t:0});
-}
-// parçacıklar: kum tozu, kıvılcım, kan damlası
-function burst(f, kind, n, dirX=0){
-  const x=cellX(f.rx), feet = kind==='dust';
-  const cols = {dust:['#e8c896','#cfa774','#b8895a'], spark:['#fff6c0','#f2c14e','#ffb347'], blood:['#b3261e','#8c1c15','#d9483b']}[kind];
-  for(let i=0;i<n;i++){
-    F.parts.push({
-      x: x + rnd(-6,6), y: feet ? GROUND+2 : GROUND-34+rnd(-8,8),
-      vx: dirX*rnd(0.5,2.5) + rnd(-1.2,1.2) * (kind==='spark'?2:1),
-      vy: feet ? rnd(-1.2,-0.3) : rnd(-3,-0.5),
-      g: feet ? 0.02 : 0.15, life:1, decay: rnd(0.015,0.035) * (kind==='spark'?1.6:1),
-      size: kind==='dust' ? rnd(2,4) : rnd(1.2,2.6), col: pick(cols), kind,
-    });
-  }
-}
-
-async function doAction(a, d, act){
-  const name = a.name;
-  if(act==='fwd'||act==='back'){
-    const step = act==='fwd' ? a.dir : -a.dir;
-    const np = a.pos + step;
-    if(np<0 || np>=ARENA_LEN || np===d.pos) { log(`${name} kıpırdayamadı.`); return; }
-    a.pos = np; a.sta = Math.max(0, a.sta-COST.move);
-    SFX.play('step'); burst(a,'dust',6,-step);
-    if(act==='back') F.crowd = clamp(F.crowd-3,0,100);
-    await sleep(250); return;
-  }
-  if(act==='rest'){
-    const gain = Math.round(22 + a.src.agi*1.5 + a.src.vit);
-    const heal = Math.round(2 + a.src.vit*0.8);
-    a.sta = Math.min(a.msta, a.sta+gain); a.hp = Math.min(a.mhp, a.hp+heal);
-    floatText(a, `+${gain}⚡`, '#5fb3ea'); SFX.play('rest');
-    log(`${name} nefeslendi.`);
-    F.crowd = clamp(F.crowd-4,0,100);
-    await sleep(350); return;
-  }
-  if(act==='taunt'){
-    const ch = clamp(40 + (a.src.cha - d.src.cha)*5, 10, 90);
-    if(Math.random()*100 < ch){
-      d.sta = Math.max(0, d.sta-15); d.angry = 2;
-      F.crowd = clamp(F.crowd + 10 + a.src.cha, 0, 100);
-      floatText(d, 'ÖFKE!', '#ff8a3d'); SFX.play('taunt'); SFX.play('cheer',0.5);
-      log(`${name} alay etti! ${d.isPlayer?'Sinirlendin':d.name+' sinirlendi'}.`);
-    } else {
-      F.crowd = clamp(F.crowd-5,0,100);
-      floatText(a, 'yuhh', '#b9a585'); SFX.play('taunt'); SFX.play('boo');
-      log(`${name} alay etmeye çalıştı ama kimse gülmedi.`);
-    }
-    await sleep(400); return;
-  }
-  // saldırılar
-  if(dist()>1){ log('Çok uzak!'); return; }
-  const tired = a.sta < COST[act];
-  const chance = hitChance(a, d, act);
-  a.sta = Math.max(0, a.sta - COST[act]);
-  if(a.angry) a.angry--;
-  a.lunge = 1; SFX.play('swing');
-  await sleep(160);
-  if(Math.random()*100 < chance){
-    let dmg = baseDmg(a, act) * rnd(0.85,1.15) * (tired?0.6:1);
-    const crit = Math.random() < 0.06 + a.src.agi*0.005;
-    if(crit) dmg *= 1.6;
-    const red = armorOf(d.src)*0.7 + d.src.def*1.2;
-    const raw = dmg;
-    dmg = Math.max(1, Math.round(dmg - red*(act==='power'?0.6:1)));
-    d.hp = Math.max(0, d.hp - dmg); d.flash = 1;
-    F.shake = act==='power'||crit ? 8 : 3;
-    const blocked = dmg < raw*0.55 && (item(d.src,'shield').v || armorOf(d.src)>=6);
-    if(crit){ SFX.play('crit'); F.sflash = 0.6; buzz([30,40,60]); burst(d,'blood',14,a.dir); burst(d,'spark',8,a.dir); }
-    else if(act==='power'){ SFX.play('heavy'); buzz(50); burst(d,'blood',9,a.dir); }
-    else if(blocked){ SFX.play('clang'); buzz(15); burst(d,'spark',10,a.dir); }
-    else { SFX.play('hit'); buzz(25); burst(d,'blood',5,a.dir); }
-    if(d.hp<=0){ F.shake = 12; F.sflash = 0.8; SFX.play('heavy'); burst(d,'blood',18,a.dir); burst(d,'dust',12,a.dir); }
-    else if((crit || act==='power') && F.crowd>55) SFX.play('cheer', F.crowd/100);
-    floatText(d, (crit?'KRİTİK ':'')+'-'+dmg, crit?'#f2c14e':'#ff6a5a');
-    F.crowd = clamp(F.crowd + (act==='power'?9:act==='normal'?5:3) + (crit?8:0), 0, 100);
-    log(`${name} ${({quick:'hızlıca vurdu',normal:'vurdu',power:'güçlü bir darbe indirdi'})[act]}: ${dmg} hasar${crit?' (kritik!)':''}.`);
-    // güçlü vuruş geri iter
-    if(act==='power' && d.hp>0){
-      const np = d.pos + a.dir;
-      if(np>=0 && np<ARENA_LEN && Math.random()<0.6){ d.pos=np; burst(d,'dust',10,a.dir); log(`${d.isPlayer?'Geriye savruldun':d.name+' geriye savruldu'}!`); }
-    }
-  } else {
-    floatText(d, 'ISKA', '#cfd6dc'); SFX.play('miss'); burst(d,'dust',4,-a.dir);
-    log(`${name} ıskaladı${tired?' (yorgun)':''}.`);
-  }
-  await sleep(300);
-}
-
-function enemyChoice(){
-  const e=F.e, p=F.p, dd=dist();
-  const hpR = e.hp/e.mhp;
-  if(dd>1){
-    if(e.sta < 20 && Math.random()<0.6) return 'rest';
-    if(e.src.cha>=5 && Math.random()<0.15) return 'taunt';
-    return 'fwd';
-  }
-  if(e.sta < 10) return (hpR<0.35 && Math.random()<0.5) ? 'back' : 'rest';
-  const r = Math.random();
-  const finish = p.hp < baseDmg(e,'normal')*0.8;
-  if(finish && e.sta>=COST.quick) return 'quick';
-  if(e.sta>=COST.power && r<0.3) return 'power';
-  if(e.sta>=COST.normal && r<0.75) return 'normal';
-  if(e.sta>=COST.quick) return r<0.92 ? 'quick' : 'taunt';
-  return 'rest';
-}
-
-async function playerAct(act){
-  if(!F || F.busy || F.over) return;
-  const fight = F;
-  fight.busy = true; updateFightUI();
-  await doAction(fight.p, fight.e, act);
-  if(!(await checkEnd())){
-    await sleep(250);
-    await doAction(fight.e, fight.p, enemyChoice());
-    await checkEnd();
-  }
-  fight.busy = false; updateFightUI();
-}
-
-async function checkEnd(){
-  updateFightUI();
-  if(F.p.hp>0 && F.e.hp>0) return false;
-  F.over = true;
-  const won = F.e.hp<=0;
-  (won?F.e:F.p).dead = true;
-  log(won ? `${F.e.name} kuma düştü! Zafer senin!` : 'Kuma düştün...');
-  await sleep(1400);
-  endFight(won);
-  return true;
-}
-
-function endFight(won){
-  const f=F.foe, crowdBonus = 1 + F.crowd/200;
-  let gold, xp, lines=[];
-  if(won){
-    gold = Math.round(f.gold * crowdBonus * (1 + P.cha*0.02));
-    xp = f.xp; P.wins++;
-    if(f.diff==='ŞAMPİYONLUK'){ P.champion=true; lines.push('👑 <b>ARENA ŞAMPİYONU OLDUN!</b> Özgürlüğünü kazandın.'); }
-  } else {
-    gold = -Math.floor(P.gold*0.15); xp = Math.round(f.xp*0.25); P.losses++;
-    lines.push('Hekimler seni toparladı. Bedelini altınla ödedin.');
-  }
-  P.gold = Math.max(0, P.gold+gold); P.xp += xp;
-  lines.unshift(`<div class="kv"><span>Altın</span><span>${gold>=0?'+':''}${gold} 🪙</span></div>
-    <div class="kv"><span>Tecrübe</span><span>+${xp} ✨</span></div>
-    <div class="kv"><span>Seyirci coşkusu</span><span>%${Math.round(F.crowd)}</span></div>`);
-  SFX.play(won?'win':'lose');
-  let leveled = false;
-  while(P.xp >= xpNeed(P.level)){
-    P.xp -= xpNeed(P.level); P.level++; P.pts += 3;
-    if(!leveled){ SFX.play('levelup'); leveled = true; }
-    lines.push(`⬆️ <b>Seviye ${P.level}!</b> +3 özellik puanı.`);
-  }
-  save();
-  $('rIcon').textContent = won ? '🏆' : '💀';
-  $('rTitle').textContent = won ? 'Zafer!' : 'Yenilgi';
-  $('rBody').innerHTML = lines.map(l=>`<div style="margin:4px 0">${l}</div>`).join('');
-  F = null;
-  go('result');
-}
-
-function updateFightUI(){
-  if(!F) return;
-  const {p,e}=F;
-  const set=(id,v,m)=>{$(id).style.width=(100*v/m)+'%'; $(id+'t').textContent=`${Math.round(v)}/${m}`;};
-  set('fPH',p.hp,p.mhp); set('fPS',p.sta,p.msta); set('fEH',e.hp,e.mhp); set('fES',e.sta,e.msta);
-  $('fC').style.width=F.crowd+'%'; $('fCt').textContent='%'+Math.round(F.crowd);
-  const near = dist()<=1, lock = F.busy||F.over;
-  document.querySelectorAll('#acts button').forEach(b=>{
-    const a=b.dataset.a;
-    let dis = lock;
-    if(a==='fwd') dis ||= near;
-    if(a==='back') dis ||= p.pos<=0;
-    if(['quick','normal','power'].includes(a)){
-      dis ||= !near;
-      b.querySelector('small').textContent = near ? `%${hitChance(p,e,a)} · -${COST[a]}⚡` : 'menzil dışı';
-    }
-    b.disabled = dis;
-  });
-}
-document.querySelectorAll('#acts button').forEach(b=>b.onclick=()=>playerAct(b.dataset.a));
-
-// ---------- ÇİZİM ----------
-const cv=$('cv'), ctx=cv.getContext('2d');
-let W=360, H=200;
-function resizeCanvas(){
-  const r=cv.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
-  if(!r.width) return;
-  cv.width=r.width*dpr; cv.height=r.height*dpr;
-  ctx.setTransform(cv.width/W,0,0,cv.height/H,0,0);
-}
-window.addEventListener('resize', resizeCanvas);
-const cellX = pos => (pos+0.5)*(W/ARENA_LEN);
-const GROUND = 168;
-
-function drawBg(t){
-  // gökyüzü & tribün
-  const g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#e8a25c'); g.addColorStop(0.35,'#c97a45'); g.addColorStop(0.36,'#5a3a22'); g.addColorStop(0.62,'#4a2f1a');
-  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-  // seyirciler
-  const excite = F ? F.crowd/100 : 0.3;
-  for(let row=0; row<3; row++){
-    for(let i=0;i<30;i++){
-      const x = i*12.5 + (row%2)*6, by = 82+row*14;
-      const jump = Math.max(0, Math.sin(t/120 + i*1.7 + row)) * 4 * excite;
-      ctx.fillStyle = ['#2a1a0e','#3a2414','#24160b'][(i+row)%3];
-      ctx.beginPath(); ctx.arc(x, by - jump, 4, 0, 7); ctx.fill();
-      ctx.fillRect(x-4, by-jump+2, 8, 8);
-    }
-  }
-  // duvar
-  ctx.fillStyle='#8a6440'; ctx.fillRect(0,124,W,10);
-  ctx.fillStyle='#6d4d30'; for(let x=0;x<W;x+=24) ctx.fillRect(x,124,2,10);
-  // kum
-  const s=ctx.createLinearGradient(0,134,0,H); s.addColorStop(0,'#d9b27a'); s.addColorStop(1,'#b8895a');
-  ctx.fillStyle=s; ctx.fillRect(0,134,W,H-134);
-  ctx.fillStyle='#00000014';
-  for(let i=0;i<ARENA_LEN;i++){ ctx.fillRect(cellX(i)-12, GROUND+8, 24, 2); }
-}
-
-function drawFighter(f, t){
-  const src=f.src, x=cellX(f.rx) + Math.sin(f.lunge*Math.PI)*16*f.dir, y=GROUND;
-  const armor=item(src,'armor'), helm=item(src,'helmet'), wpn=item(src,'weapon'), shd=item(src,'shield');
-  const breathe = f.dead?0:Math.sin(t/300 + (f.isPlayer?0:1))*1;
-  ctx.save();
-  ctx.translate(x,y);
-  // gölge
-  ctx.fillStyle='#00000033'; ctx.beginPath(); ctx.ellipse(0,4,16,4,0,0,7); ctx.fill();
-  if(f.dead){ ctx.rotate(-f.dir*f.fall*Math.PI/2); }
-  ctx.scale(f.dir,1);
-  const skin = f.isPlayer ? '#d9a06b' : '#b07a4a';
-  const tunic = f.isPlayer ? '#8c2f1f' : '#2f4f8c';
-  // bacaklar
-  ctx.strokeStyle=skin; ctx.lineWidth=4; ctx.lineCap='round';
-  ctx.beginPath(); ctx.moveTo(-3,-18); ctx.lineTo(-6,0); ctx.moveTo(3,-18); ctx.lineTo(6,0); ctx.stroke();
-  ctx.strokeStyle='#5a3a1a'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(-7,0); ctx.lineTo(-3,0); ctx.moveTo(5,0); ctx.lineTo(9,0); ctx.stroke();
-  // gövde
-  ctx.translate(0,breathe);
-  ctx.fillStyle=tunic; ctx.fillRect(-8,-24,16,10);
-  ctx.fillStyle=armor.v?armor.col:skin; ctx.fillRect(-7,-42,14,20);
-  if(armor.v){ ctx.fillStyle='#00000025'; for(let i=0;i<4;i++) ctx.fillRect(-7,-40+i*5,14,1); }
-  // arka kol + kalkan
-  if(shd.v){
-    ctx.fillStyle=shd.col; ctx.strokeStyle='#00000066'; ctx.lineWidth=1.5;
-    const sz = 7+shd.v;
-    ctx.beginPath(); ctx.ellipse(9,-30,4,sz,0,0,7); ctx.fill(); ctx.stroke();
-  }
-  // baş
-  ctx.fillStyle=skin; ctx.beginPath(); ctx.arc(0,-49,6,0,7); ctx.fill();
-  ctx.fillStyle='#000'; ctx.fillRect(2,-51,2,2);
-  if(helm.v){
-    ctx.fillStyle=helm.col; ctx.beginPath(); ctx.arc(0,-50,7,Math.PI,0); ctx.fill();
-    ctx.fillRect(-7,-51,3,6);
-    if(helm.v>=5){ ctx.fillStyle=f.isPlayer?'#d9483b':'#4f9fd9'; ctx.fillRect(-2,-62,4,6); ctx.fillRect(-6,-62,8,3); }
-  }
-  // ön kol + silah
-  const swing = f.lunge>0 ? -0.9 + f.lunge*1.6 : -0.5;
-  ctx.save(); ctx.translate(4,-38); ctx.rotate(swing);
-  ctx.strokeStyle=skin; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(10,0); ctx.stroke();
-  ctx.strokeStyle='#5a3a1a'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(10,2); ctx.lineTo(10,-2); ctx.stroke();
-  const len = 14 + wpn.v*0.6;
-  ctx.strokeStyle=wpn.col; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(11,0); ctx.lineTo(11+len,0); ctx.stroke();
-  if(wpn.n.includes('Balta')){ ctx.fillStyle=wpn.col; ctx.beginPath(); ctx.moveTo(8+len,-7); ctx.lineTo(13+len,-7); ctx.lineTo(13+len,7); ctx.lineTo(8+len,7); ctx.fill(); }
-  if(wpn.n.includes('Mızrak')){ ctx.fillStyle=wpn.col; ctx.beginPath(); ctx.moveTo(11+len,-3); ctx.lineTo(17+len,0); ctx.lineTo(11+len,3); ctx.fill(); }
-  ctx.restore();
-  // hasar parlaması
-  if(f.flash>0){ ctx.globalCompositeOperation='source-atop'; ctx.fillStyle=`rgba(255,255,255,${f.flash*0.7})`; ctx.fillRect(-20,-70,45,75); }
-  ctx.restore();
-  // öfke işareti
-  if(f.angry && !f.dead){ ctx.fillStyle='#ff8a3d'; ctx.font='bold 12px system-ui'; ctx.textAlign='center'; ctx.fillText('💢', x, y-70); }
-}
-
-let last=0;
-function frame(t){
-  requestAnimationFrame(frame);
-  if(!F || !$('s-fight').classList.contains('on')) return;
-  const dt = Math.min(50, t-last); last=t;
-  for(const f of [F.p,F.e]){
-    f.rx += (f.pos - f.rx) * Math.min(1, dt/90);
-    if(f.lunge>0){ f.lunge -= dt/300; if(f.lunge<0) f.lunge=0; }
-    if(f.flash>0) f.flash = Math.max(0, f.flash - dt/250);
-    if(f.dead && f.fall<1) f.fall = Math.min(1, f.fall + dt/500);
-  }
-  ctx.save();
-  if(F.shake>0){ ctx.translate(rnd(-F.shake,F.shake), rnd(-F.shake,F.shake)*0.5); F.shake = Math.max(0,F.shake - dt/30); }
-  drawBg(t);
-  drawFighter(F.e,t); drawFighter(F.p,t);
-  ctx.textAlign='center'; ctx.font='bold 14px system-ui';
-  // parçacıklar
-  const k = dt/16.7;
-  F.parts = F.parts.filter(p=>p.life>0);
-  for(const p of F.parts){
-    p.vy += p.g*k; p.x += p.vx*k; p.y += p.vy*k; p.life -= p.decay*k;
-    if(p.y > GROUND+6 && p.kind!=='dust'){ p.y = GROUND+6; p.vx*=0.3; p.vy=0; p.g=0; }
-    ctx.globalAlpha = Math.max(0,p.life) * (p.kind==='dust'?0.6:1);
-    ctx.fillStyle = p.col;
-    const s = p.kind==='dust' ? p.size*(2-p.life) : p.size;
-    ctx.beginPath(); ctx.arc(p.x,p.y,s,0,7); ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-  F.texts = F.texts.filter(o=>o.t<1);
-  for(const o of F.texts){
-    o.t += dt/1100;
-    ctx.globalAlpha = 1-o.t; ctx.fillStyle='#000'; ctx.fillText(o.text, o.x+1, o.y - o.t*40+1);
-    ctx.fillStyle=o.color; ctx.fillText(o.text, o.x, o.y - o.t*40);
-  }
-  ctx.globalAlpha=1;
-  ctx.restore();
-  // kritik vuruşta ekran parlaması
-  if(F.sflash>0){
-    ctx.fillStyle = `rgba(255,240,200,${F.sflash})`; ctx.fillRect(0,0,W,H);
-    F.sflash = Math.max(0, F.sflash - dt/400);
-  }
-}
-requestAnimationFrame(frame);
-
-// ---------- AKIŞ ----------
-function continueGame(){ P=load(); if(P) go('hub'); }
-function resetGame(){
-  if(!confirm('Tüm ilerleme silinecek. Emin misin?')) return;
-  try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
-  P=null; showTitle();
-}
-function showTitle(){ $('btnContinue').style.display = load() ? '' : 'none'; go('title'); }
-const _go = go;
-go = function(name){ if(name==='create'){ $('nameIn').value=''; startCreate(); } _go(name); };
-showTitle();
-// PWA: web'den açıldığında çevrimdışı çalışsın (yerel uygulama içinde gerekmez)
-if('serviceWorker' in navigator && location.protocol.startsWith('http') && !window.Capacitor){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
-}
-</script>
+<script src="js/data.js"></script>
+<script src="js/gfx.js"></script>
+<script src="js/sfx.js"></script>
+<script src="js/hero.js"></script>
+<script src="js/body.js"></script>
+<script src="js/gear.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/city-art.js"></script>
+<script src="js/city-shops.js"></script>
+<script src="js/shops-art.js"></script>
+<script src="js/city.js"></script>
+<script src="js/fight.js"></script>
+<script src="js/ui.js"></script>
 </body>
 </html>

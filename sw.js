@@ -1,6 +1,9 @@
-// Çevrimdışı çalışma için basit önbellek. Oyunu güncellediğinde VERSION'ı artır.
-const VERSION = 'kvk-v1';
-const FILES = ['./', './index.html', './manifest.webmanifest', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png'];
+// Çevrimdışı çalışma için basit önbellek. Oyunu güncellediğinde VERSION'ı artır (yayinla.sh bunu otomatik yapar).
+const VERSION = 'kvk-20261121015432';
+const FILES = ['./', './index.html', './manifest.webmanifest', './css/style.css',
+  './js/data.js', './js/gfx.js', './js/sfx.js', './js/hero.js', './js/body.js', './js/gear.js', './js/scenes.js',
+  './js/city-art.js', './js/city-shops.js', './js/shops-art.js', './js/city.js', './js/fight.js', './js/ui.js',
+  './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
