@@ -2,11 +2,12 @@
 // ---------- DÖVÜŞ ----------
 const GROUND = 230, FSIZE = 112;
 const cellX = pos => (pos+0.5)*(400/ARENA_LEN);
-const maxHp  = f => 50 + f.vit*10 + f.level*5;
+const maxHp  = f => 26 + f.vit*7 + f.level*4;   // düellolar ~10-13 turda biter (bkz. denge simülasyonu)
 const maxSta = f => 60 + f.agi*3 + f.vit*2;
 const item = (f,slot) => ITEMS[slot].list[f.eq[slot]];
 const armorOf = f => item(f,'armor').v + item(f,'helmet').v + item(f,'shield').v;
 const COST = {quick:8, normal:16, power:28, move:4};
+const DMG_BASE = 4, DMG_FLOOR = 0.35;  // zırh, ham hasarın en fazla %65'ini emer
 const ADUR = {quick:520, normal:660, power:840};
 let F = null;
 const FV = {sc:null, crowd:null, parts:new Particles(), texts:[], shake:0, flash:0, zoom:null};
@@ -24,7 +25,7 @@ function hitChance(a,d,kind){
   if(a.sta<COST[kind]) ch-=25;
   return clamp(Math.round(ch),8,96);
 }
-function baseDmg(a,kind){ return (item(a.src,'weapon').v + a.src.str*2.2) * {quick:0.6,normal:1,power:1.75}[kind]; }
+function baseDmg(a,kind){ return (item(a.src,'weapon').v + a.src.str*2.2 + DMG_BASE) * {quick:0.6,normal:1,power:1.75}[kind]; }
 function log(t){ const d=document.createElement('div'); d.textContent=t; $('log').appendChild(d); while($('log').children.length>3) $('log').firstChild.remove(); }
 function floatText(f,text,color,big=false){ FV.texts.push({x:cellX(f.rx),y:GROUND-FSIZE*0.95,text,color,big,t:0}); }
 function burst(f,kind,n,dirX=0){
@@ -37,11 +38,11 @@ function burst(f,kind,n,dirX=0){
 }
 
 function startFight(foe){
-  F={foe, p:fighter(P,1,1,true), e:fighter(foe.e,ARENA_LEN-2,-1,false), crowd:30, busy:false, over:false};
+  F={foe, p:fighter(P,2,1,true), e:fighter(foe.e,ARENA_LEN-3,-1,false), crowd:30, busy:false, over:false, intro:!!foe.intro, t0:now()};
   FV.parts=new Particles(); FV.texts=[]; FV.shake=0; FV.flash=0; FV.zoom=null;
   SFX.play('gong'); setTimeout(()=>SFX.play('cheer',0.6),300);
   $('log').innerHTML=''; $('fPN').textContent=P.name; $('fEN').textContent=`${foe.e.name} · Sv.${foe.e.level}`;
-  log(`${foe.e.name} arenaya çıktı! Seyirci ayakta!`);
+  log(foe.intro ? `İki esir kuma itildi: sen ve ${foe.e.name}. Elinizde paslı kılıçtan başka bir şey yok!` : `${foe.e.name} arenaya çıktı! Seyirci ayakta!`);
   fadeTo(()=>{ go('fight'); updateFightUI(true); });
 }
 
@@ -52,13 +53,13 @@ async function doAction(a,d,act){
     if(np<0||np>=ARENA_LEN||np===d.pos){ log(`${name} kıpırdayamadı.`); return; }
     a.pos=np; a.sta=Math.max(0,a.sta-COST.move); SFX.play('step'); burst(a,'dust',6,-step);
     if(act==='back') F.crowd=clamp(F.crowd-3,0,100);
-    await sleep(320); return;
+    await sleep(260); return;
   }
   if(act==='rest'){
-    const gain=Math.round(22+a.src.agi*1.5+a.src.vit), heal=Math.round(2+a.src.vit*0.8);
+    const gain=Math.round(22+a.src.agi*1.5+a.src.vit), heal=Math.round(1+a.src.vit*0.5);
     a.sta=Math.min(a.msta,a.sta+gain); a.hp=Math.min(a.mhp,a.hp+heal); animate(a,'rest',900);
     floatText(a,`+${gain} enerji`,'#7cc4f4'); SFX.play('rest'); log(`${name} nefeslendi.`); F.crowd=clamp(F.crowd-4,0,100);
-    await sleep(650); return;
+    await sleep(520); return;
   }
   if(act==='taunt'){
     const ch=clamp(40+(a.src.cha-d.src.cha)*5,10,90); animate(a,'taunt',1000);
@@ -66,7 +67,7 @@ async function doAction(a,d,act){
       floatText(d,'ÖFKE!','#ff8a3d'); SFX.play('taunt'); SFX.play('cheer',0.5); log(`${name} alay etti! ${d.isPlayer?'Sinirlendin':d.name+' sinirlendi'}.`);
       if(F.crowd>60) for(let i=0;i<10;i++) FV.parts.add({x:rnd(20,380),y:rnd(90,120),vx:rnd(-0.3,0.3),vy:rnd(0.3,0.8),g:0.01,decay:0.008,size:rnd(1.5,2.6),col:pick(['#e2b44a','#c23a2c','#f4e8d0']),kind:'petal'});
     } else { F.crowd=clamp(F.crowd-5,0,100); floatText(a,'yuhh','#c9b8a0'); SFX.play('taunt'); SFX.play('boo'); log(`${name} alay etmeye çalıştı ama kimse gülmedi.`); }
-    await sleep(700); return;
+    await sleep(600); return;
   }
   if(dist()>1){ log('Çok uzak!'); return; }
   const tired=a.sta<COST[act], chance=hitChance(a,d,act), dur=ADUR[act];
@@ -77,7 +78,7 @@ async function doAction(a,d,act){
     let dmg=baseDmg(a,act)*rnd(0.85,1.15)*(tired?0.6:1);
     const crit=Math.random()<0.06+a.src.agi*0.005; if(crit) dmg*=1.6;
     const red=armorOf(d.src)*0.7+d.src.def*1.2, raw=dmg;
-    dmg=Math.max(1,Math.round(dmg-red*(act==='power'?0.6:1)));
+    dmg=Math.max(1,Math.round(Math.max(raw*DMG_FLOOR, raw-red*(act==='power'?0.6:1))));
     d.hp=Math.max(0,d.hp-dmg); d.flash=1;
     const blocked=dmg<raw*0.55 && (item(d.src,'shield').v || armorOf(d.src)>=6);
     animate(d, blocked?'block':'hit', blocked?520:560);
@@ -114,14 +115,14 @@ async function playerAct(act){
   if(!F||F.busy||F.over) return;
   const fight=F; fight.busy=true; updateFightUI();
   await doAction(fight.p,fight.e,act);
-  if(!(await checkEnd())){ await sleep(220); await doAction(fight.e,fight.p,enemyChoice()); await checkEnd(); }
+  if(!(await checkEnd())){ await sleep(150); await doAction(fight.e,fight.p,enemyChoice()); await checkEnd(); }
   fight.busy=false; if(F===fight) updateFightUI();
 }
 async function checkEnd(){
   updateFightUI(); if(F.p.hp>0&&F.e.hp>0) return false;
   F.over=true; const won=F.e.hp<=0; (won?F.e:F.p).dead=true;
   log(won?`${F.e.name} kuma düştü! Zafer senin!`:'Kuma düştün...');
-  await sleep(1700); endFight(won); return true;
+  await sleep(1500); endFight(won); return true;
 }
 function updateFightUI(instant){
   if(!F) return; const {p,e}=F;
@@ -206,5 +207,10 @@ function fightFrame(t,dt){
     c.font='900 15px system-ui'; c.textAlign='center'; c.lineJoin='round'; c.lineWidth=3.5; c.strokeStyle='rgba(20,8,4,0.85)'; c.strokeText(o.text,0,0); c.fillStyle=o.color; c.fillText(o.text,0,0); c.restore(); }
   c.restore();
   vignette(c,400,S.LH,0.35);
+  if(F.intro){ const k=(now()-F.t0)/(DBG?40000:2800); if(k<1){ const a=k<0.15?k/0.15:k>0.7?(1-k)/0.3:1;
+    c.save(); c.globalAlpha=a; c.fillStyle='rgba(12,6,3,0.55)'; c.fillRect(0,S.LH*0.32,400,64);
+    c.textAlign='center'; c.textBaseline='middle'; c.font='700 26px Palatino,"Book Antiqua",Georgia,serif'; c.lineWidth=4; c.strokeStyle='rgba(20,8,4,0.9)';
+    c.strokeText('İ L K   D Ö V Ü Ş',200,S.LH*0.32+24); c.fillStyle='#f6d98a'; c.fillText('İ L K   D Ö V Ü Ş',200,S.LH*0.32+24);
+    c.font='italic 12px Palatino,Georgia,serif'; c.fillStyle='#f5e8d0'; c.fillText('Hayatta kal, kalabalığı coştur',200,S.LH*0.32+48); c.restore(); } }
   if(FV.flash>0){ c.fillStyle=`rgba(255,240,205,${FV.flash})`; c.fillRect(0,0,400,S.LH); FV.flash=Math.max(0,FV.flash-dt/420); }
 }

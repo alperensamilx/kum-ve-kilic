@@ -183,3 +183,7 @@ canvas.scene{display:block;width:100%;border-radius:14px;border:1px solid #5e432
 .eqrow:last-child{border-bottom:0}
 .eqrow canvas{width:44px;height:44px;border-radius:9px;background:radial-gradient(circle at 50% 40%,#4a3320,#1a110a);border:1px solid #5e4326}
 .eqrow small{color:var(--muted);display:block;font-size:12px}
+.speech.angry{background:linear-gradient(#ffd8cc,#f2ad98);color:#4a0f08;animation:shake .45s ease}
+.speech.angry::before{border-bottom-color:#ffd8cc}
+.speech.angry b{color:#a8200f}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-5px) rotate(-1deg)}40%{transform:translateX(5px) rotate(1deg)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}

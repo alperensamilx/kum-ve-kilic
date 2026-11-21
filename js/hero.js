@@ -111,6 +111,9 @@ function rig(look, st, t){
     a = q<0.55 ? lerpPose(a,up,ease(q/0.55)) : q<0.66 ? lerpPose({...a,...up},dn,easeIn((q-0.55)/0.11)) : lerpPose({...a,...dn},g,ease((q-0.66)/0.34));
     lean+=0.14;
   }
+  else if(kind==='angry'){ // sinirli satıcı: aleti sallar, öne eğilir, tepinir
+    const e=plateau(p), sh=Math.sin(t/42)*0.28*e; a=lerpPose(a,{nu:1.85,nf:2.6,wp:2.75,fu:0.95,ff:1.95},e);
+    a.nf+=sh; a.nu+=sh*0.5; lean+=0.14*e; tilt+=0.08*e+Math.sin(t/60)*0.03*e; by-=Math.abs(Math.sin(t/85))*1.6*e; }
   else if(kind==='polish'){ a.nu=0.78+Math.sin(t/260)*0.12; a.nf=1.55+Math.cos(t/260)*0.22; a.wp=1.9; a.fu=0.9; a.ff=1.65; lean+=0.08; }
   else if(kind==='paint'){ a.nu=0.95+Math.sin(t/420)*0.16; a.nf=1.95+Math.sin(t/420+1)*0.25; a.wp=2.2; a.fu=0.8; a.ff=1.6; lean+=0.1; }
   if(st.anger) tilt+=0.05;

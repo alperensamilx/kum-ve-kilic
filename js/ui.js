@@ -29,7 +29,7 @@ const EQ0 = {weapon:0,armor:0,helmet:0,shield:0};
 function draftSrc(){ if(!draft) return null; return {...draft.cur, level:draft.fresh||!P?1:P.level, eq:draft.fresh||!P?EQ0:P.eq, look:draft.look}; }
 function newDraft(base,pts,look,fresh=false){ return {base:{...base}, cur:{...base}, pts, look:{...look}, fresh}; }
 function derived(s,fresh=draft&&draft.fresh){ const lvl=fresh||!P?1:P.level, eq=fresh||!P?EQ0:P.eq, f={...s,level:lvl,eq};
-  return {hp:maxHp(f), sta:maxSta(f), dmg:Math.round(ITEMS.weapon.list[eq.weapon].v+s.str*2.2), arm:Math.round(armorOf(f)*0.7+s.def*1.2)}; }
+  return {hp:maxHp(f), sta:maxSta(f), dmg:Math.round(ITEMS.weapon.list[eq.weapon].v+s.str*2.2+DMG_BASE), arm:Math.round(armorOf(f)*0.7+s.def*1.2)}; }
 function renderDerived(el,d){
   const a=derived(d.cur), b=derived(d.base), dl=k=>a[k]>b[k]?` <span class="d">+${a[k]-b[k]}</span>`:'';
   el.innerHTML=`<span class="chip">${ico('i-heart')}Can <b>${a.hp}</b>${dl('hp')}</span><span class="chip">${ico('i-bolt')}Enerji <b>${a.sta}</b>${dl('sta')}</span>`+
@@ -67,8 +67,16 @@ document.querySelectorAll('#cTabs button').forEach(b=>b.onclick=()=>setTab(b.dat
 function finishCreate(){
   const name=$('nameIn').value.trim()||'İsimsiz';
   if(draft.pts>0 && !confirm(`${draft.pts} puan harcanmadı. Yine de devam edilsin mi?`)) return;
-  P={name,level:1,xp:0,gold:50,pts:0,wins:0,losses:0,...draft.cur,eq:{weapon:0,armor:0,helmet:0,shield:0},champion:false,look:{...draft.look}};
-  save(); SFX.play('gong'); fadeTo(()=>go('city'));
+  P={name,level:1,xp:0,gold:50,pts:0,wins:0,losses:0,...draft.cur,eq:{weapon:0,armor:0,helmet:0,shield:0},champion:false,look:{...draft.look},introDone:false,shopMood:{}};
+  save(); startFight(introFoe());   // oyun, eşit güçte bir esirle ilk düelloyla başlar
+}
+// İlk düello: senin kadar güçsüz, hiçbir eşyası olmayan bir esir
+function introFoe(){
+  const e=makeEnemy(1); e.name=pick(INTRO_NAMES); e.arch='Esir'; e.cloth=ARCH_CLOTH['Esir'];
+  for(const k of ['str','atk','def','agi','vit','cha']) e[k]=1;
+  let pts=START_PTS-2; const ks=['str','atk','def','agi','vit']; while(pts-->0) e[pick(ks)]++;
+  e.eq={weapon:0,armor:0,helmet:0,shield:0};
+  return {e, diff:'İlk Dövüş', mult:0.8, gold:40, xp:40, intro:true};
 }
 function openTrain(){
   const base={}; STATS.forEach(([k])=>base[k]=P[k]); draft=newDraft(base,P.pts,P.look); DOLL.train.body=null;
@@ -104,10 +112,25 @@ function drawIcons(root,getItem){
 // ---------- DÜKKANLAR ----------
 let shopTab='weapon';
 function openShop(kind){
-  SHOPV.kind=kind; SHOPV.preview=null; SHOPV.sel=null; shopTab=SHOPS[kind].slots[0]; lastPlace=kind;
-  say(pick(SHOPS[kind].lines)); go('shop'); renderShop();
+  SHOPV.kind=kind; SHOPV.preview=null; SHOPV.sel=null; SHOPV.bought=false; SHOPV.angry=null; SHOPV.leaving=false; shopTab=SHOPS[kind].slots[0]; lastPlace=kind;
+  const mood=(P.shopMood||{})[kind]||0;
+  say(mood>0 ? SHOPS[kind].back : pick(SHOPS[kind].lines)); go('shop'); renderShop();
 }
-function say(t){ $('sSpeech').innerHTML=`<b>${SHOPS[SHOPV.kind].keeper}</b>${t}`; }
+function say(t,angry=false){ const el=$('sSpeech'); el.innerHTML=`<b>${SHOPS[SHOPV.kind].keeper}</b>${t}`; el.classList.toggle('angry',angry); if(angry){ el.style.animation='none'; void el.offsetWidth; el.style.animation=''; } }
+// Eli boş çıkınca satıcı sinirlenir; her eli boş çıkış öfkeyi artırır, alışveriş sıfırlar
+function leaveShop(stay=false){
+  if(SHOPV.leaving) return;
+  const kind=SHOPV.kind, sh=SHOPS[kind];
+  const prices=sh.slots.flatMap(s=>ITEMS[s].list.filter((it,i)=>i>P.eq[s]).map(it=>it.c));
+  if(SHOPV.bought || !prices.length){ toCity(); return; }
+  P.shopMood=P.shopMood||{}; const mood=(P.shopMood[kind]||0)+1; P.shopMood[kind]=mood; save();
+  const lvl=Math.min(3,mood), broke=P.gold<Math.min(...prices);
+  say(broke && lvl<3 ? BROKE_LINE : sh.angry[lvl-1], true);
+  SHOPV.angry={t0:performance.now(), dur:1700, lvl}; SHOPV.leaving=true; SHOPV.preview=null;
+  SFX.play('grumble'); if(lvl>=2) SFX.play('boo'); buzz(lvl>=2?[40,40,70]:30);
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(!stay) setTimeout(()=>{ SHOPV.leaving=false; toCity(); },1650);
+}
 function renderShop(){
   const sh=SHOPS[SHOPV.kind]; $('sTitle').textContent=sh.title; $('sGold').textContent=P.gold;
   $('sTabs').innerHTML = sh.slots.length>1 ? sh.slots.map(s=>`<button class="btn sm ${s===shopTab?'gold':''}" data-s="${s}">${ITEMS[s].label}</button>`).join('') : '';
@@ -129,7 +152,8 @@ function renderShop(){
   });
   $('sList').querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{
     const i=+b.dataset.buy, it=ITEMS[shopTab].list[i]; if(P.gold<it.c) return;
-    const old=ITEMS[shopTab].list[P.eq[shopTab]]; P.gold-=it.c; P.gold+=Math.floor(old.c*0.3); P.eq[shopTab]=i; save();
+    const old=ITEMS[shopTab].list[P.eq[shopTab]]; P.gold-=it.c; P.gold+=Math.floor(old.c*0.3); P.eq[shopTab]=i;
+    SHOPV.bought=true; (P.shopMood||(P.shopMood={}))[SHOPV.kind]=0; save();
     SFX.play('equip'); buzz(20); SHOPV.preview=null; SHOPV.sel=null; SHOPV.pop=performance.now();
     say(pick(['Hayırlı olsun! Kumda şanını yürütsün.','İyi seçim. Seni koruyacak.','Bununla kalabalık adını haykıracak.']));
     renderShop();
@@ -173,6 +197,8 @@ function endFight(won){
   if(won){ gold=Math.round(f.gold*crowdBonus*(1+P.cha*0.02)); xp=f.xp; P.wins++;
     if(f.mult===4){ P.champion=true; lines.push(`<p class="note">${ico('i-crown')} <b>ARENA ŞAMPİYONU OLDUN!</b> Özgürlüğünü kazandın.</p>`); } }
   else { gold=-Math.floor(P.gold*0.15); xp=Math.round(f.xp*0.25); P.losses++; lines.push('<p class="note muted">Hekimler seni toparladı. Bedelini altınla ödedin.</p>'); }
+  if(f.intro){ P.introDone=true; lines.push(won ? `<p class="note">${ico('i-crowd')} Kalabalık adını ilk kez duydu. <b>Kızılkum'a hoş geldin!</b> Kazandığın altınla dükkânlara uğra.</p>`
+    : `<p class="note">Kaybettin ama hayattasın. <b>Kızılkum'a hoş geldin.</b> Antrenman ve teçhizatla güçlen, sonra arenaya dön.</p>`); }
   P.gold=Math.max(0,P.gold+gold); P.xp+=xp;
   const rows=`<div class="kv"><span>${ico('i-coin','s')} Altın</span><b>${gold>=0?'+':''}${gold}</b></div><div class="kv"><span>${ico('i-star','s')} Tecrübe</span><b>+${xp}</b></div><div class="kv"><span>${ico('i-crowd','s')} Seyirci coşkusu</span><b>%${Math.round(F.crowd)}</b></div>`;
   SFX.play(won?'win':'lose'); let leveled=false;
@@ -183,7 +209,7 @@ function endFight(won){
 }
 
 // ---------- AKIŞ ----------
-function continueGame(){ P=load(); if(P){ SFX.play('gong'); fadeTo(()=>go('city')); } }
+function continueGame(){ P=load(); if(!P) return; if(!P.introDone && !P.wins && !P.losses){ startFight(introFoe()); return; } SFX.play('gong'); fadeTo(()=>go('city')); }
 function resetGame(){ if(!confirm('Tüm ilerleme silinecek. Emin misin?')) return; try{ localStorage.removeItem(SAVE_KEY); }catch(e){} P=null; showTitle(); }
 function showTitle(){ $('btnContinue').style.display=load()?'':'none'; go('title'); }
 const _go=go; go=function(name){ if(name==='create') startCreate(); _go(name); };
@@ -209,7 +235,9 @@ if(DBG){
   P={name:'Demirpençe',level:6,xp:120,gold:900,pts:3,wins:7,losses:2,str:9,atk:6,def:5,agi:4,vit:7,cha:5,eq:{weapon:2,armor:2,helmet:2,shield:2},champion:false,look:{skin:1,hair:0,hairCol:0,beard:1,cloth:0}};
   const grow=(st,kind)=>()=>{ go('create'); Object.assign(draft.cur,st); draft.pts=0; renderStatEditor($('cStats'),draft,$('cPts'),DOLL.create,$('cDerived'));
     if(kind) DOLL.create.act={...REACT[kind],dur:9000,t0:performance.now()+1500}; };
-  const m={create:()=>go('create'),city:()=>go('city'),grow1:grow({str:9,vit:2}),grow2:grow({vit:9,str:2}),grow3:grow({agi:6,atk:5}),grow4:grow({str:6,vit:5,cha:5},'str'),char:openChar,train:openTrain,smith:()=>openShop('smith'),armor:()=>openShop('armor'),shield:()=>openShop('shield'),arena:openArena,
+  const m={intro:()=>{ Object.assign(P,{level:1,xp:0,gold:50,pts:0,wins:0,losses:0,str:3,atk:3,def:2,agi:2,vit:4,cha:1,eq:{...EQ0},introDone:false}); startFight(introFoe()); },
+    angry:()=>{ P.shopMood={smith:1}; openShop('smith'); setTimeout(()=>{ leaveShop(true); setInterval(()=>{ SHOPV.angry={t0:performance.now()-450,dur:1700,lvl:2}; },900); },2500); },
+    create:()=>go('create'),city:()=>go('city'),grow1:grow({str:9,vit:2}),grow2:grow({vit:9,str:2}),grow3:grow({agi:6,atk:5}),grow4:grow({str:6,vit:5,cha:5},'str'),char:openChar,train:openTrain,smith:()=>openShop('smith'),armor:()=>openShop('armor'),shield:()=>openShop('shield'),arena:openArena,
     fight:()=>{ openArena(); startFight(foeList[1]); }, win:()=>{ openArena(); F={foe:foeList[1],crowd:70,p:{},e:{}}; endFight(true); }, lose:()=>{ openArena(); F={foe:foeList[1],crowd:20,p:{},e:{}}; endFight(false); }};
   (m[DBG]||showTitle)();
 } else showTitle();

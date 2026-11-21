@@ -70,18 +70,29 @@ function shopFrame(t,dt){
       c.fillStyle=lg(c,0,f0-h,0,f0,[[0,'rgba(255,240,180,0)'],[0.35,`rgba(255,200,90,${0.75*(1-ph*0.6)})`],[1,`rgba(255,100,30,${0.85*(1-ph*0.4)})`]]);
       c.beginPath(); c.moveTo(fx-w,f0); c.quadraticCurveTo(fx-w,f0-h*0.55,fx+tip,f0-h); c.quadraticCurveTo(fx+w,f0-h*0.55,fx+w,f0); c.closePath(); c.fill(); }
     c.restore();
-    const q=((t/950)+0)%1; if(q>=0.6 && SHOPV.lastQ<0.6){ for(let i=0;i<10;i++) SHOPV.parts.add({x:186,y:fy-39,vx:rnd(-1.6,1.6),vy:rnd(-2.2,-0.6),g:0.08,decay:0.035,size:0.9,col:'#ffd27a',kind:'spark'}); SFX.play('anvil'); }
+    const q=((t/950)+0)%1; if(q>=0.6 && SHOPV.lastQ<0.6 && !SHOPV.angry){ for(let i=0;i<10;i++) SHOPV.parts.add({x:186,y:fy-39,vx:rnd(-1.6,1.6),vy:rnd(-2.2,-0.6),g:0.08,decay:0.035,size:0.9,col:'#ffd27a',kind:'spark'}); SFX.play('anvil'); }
     SHOPV.lastQ=q;
     glow(c,186,fy-40,24,'#ffb050',0.15*fl);
   } else if(kind==='armor'){
     c.save(); c.globalCompositeOperation='lighter'; c.fillStyle=lg(c,340,20,250,H,[[0,'rgba(255,220,160,0.22)'],[1,'rgba(255,220,160,0)']]);
     c.beginPath(); c.moveTo(322,18); c.lineTo(366,18); c.lineTo(300,H); c.lineTo(200,H); c.closePath(); c.fill(); c.restore();
   }
-  const kp=KEEPERS[kind];
-  drawHero(c, kind==='smith'?150:kind==='armor'?150:150, fy, 150, kp, {facing:1,kind:kp.pose,seed:4}, t);
+  // satıcı: normalde işinde; eli boş çıkınca sinirlenir
+  const kp=KEEPERS[kind], ang=SHOPV.angry, ak=ang?(t-ang.t0)/ang.dur:2;
+  if(ang && ak>=1) SHOPV.angry=null;
+  const kst = ak<1 ? {facing:1,kind:'angry',p:ak,seed:4,anger:true,tint:'#ff3a1a',tintA:clamp((0.14+0.1*Math.sin(t/70))*Math.min(1,ak*6)*(ang.lvl>1?1.35:1),0,0.4)} : {facing:1,kind:kp.pose,seed:4};
+  const KR=drawHero(c,150,fy,150,kp,kst,t);
+  if(ak<1 && Math.random()<0.6){ const sd=Math.random()<0.5?-1:1; SHOPV.parts.add({x:KR.headW.x+sd*9,y:KR.headW.y-4,vx:sd*rnd(0.4,0.9),vy:rnd(-1.2,-0.6),decay:0.022,size:rnd(3.5,5.5),grow:0.16,col:'#f6f1ea',kind:'smoke',a:0.95}); }
+  if(ak<1){ // öfke damarı işareti
+    const sc=(1+0.18*Math.sin(t/55))*Math.min(1,ak*8); c.save(); c.translate(KR.headW.x+19,KR.headW.y-7); c.scale(sc,sc);
+    c.lineCap='round'; for(const [col,w] of [['rgba(40,8,4,0.6)',4],['#ff3a22',2.4]]){ c.strokeStyle=col; c.lineWidth=w;
+      for(let i=0;i<4;i++){ c.save(); c.rotate(i*Math.PI/2); c.beginPath(); c.moveTo(1.8,-6.5); c.quadraticCurveTo(1.8,-1.8,6.5,-1.8); c.stroke(); c.restore(); } }
+    c.restore(); }
+  if(ak<1 && ang.lvl>=3 && Math.random()<0.25) SHOPV.parts.add({x:KR.headW.x+rnd(-4,4),y:KR.headW.y-20,vx:rnd(-0.6,0.6),vy:rnd(-1.4,-0.8),g:0.03,decay:0.03,size:1,col:'#ff7a3a',kind:'spark'});
   SHOPV.parts.step(dt); SHOPV.parts.draw(c);
   const look=lookOf(P); if(SHOPV.preview) Object.assign(look,SHOPV.preview);
   if(SHOPV.pop){ const p=(t-SHOPV.pop)/500; if(p<1) glow(c,322,fy-60,80,'#ffe39a',0.35*(1-p)); else SHOPV.pop=0; }
-  drawHero(c,322,fy,150,look,{facing:-1,seed:7,stand:true},t);
+  const hst={facing:-1,seed:7,stand:true}; if(ak<1 && ang.lvl>=2){ hst.kind='dodge'; hst.p=Math.min(1,ak*1.5); }
+  drawHero(c,322,fy,150,look,hst,t);
   vignette(c,400,H,0.5);
 }

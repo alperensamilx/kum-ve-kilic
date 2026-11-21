@@ -44,6 +44,7 @@ const SFX = (()=>{
     coin(){ tone(988,0.08,{type:'square',vol:0.07}); tone(1319,0.28,{type:'square',vol:0.07,delay:0.08}); },
     equip(){ fx.coin(); tone(2200,0.25,{vol:0.05,delay:0.12}); noise(0.06,{freq:3500,vol:0.12,delay:0.12}); },
     anvil(){ tone(1450,0.35,{vol:0.035}); tone(2210,0.25,{vol:0.02}); noise(0.04,{freq:3000,vol:0.06}); },
+    grumble(){ tone(150,0.28,{type:'sawtooth',vol:0.07,slide:-35}); tone(118,0.34,{type:'sawtooth',vol:0.07,slide:-25,delay:0.22}); noise(0.3,{freq:260,type:'lowpass',vol:0.18,delay:0.05}); },
     door(){ noise(0.18,{freq:180,type:'lowpass',vol:0.4}); tone(70,0.2,{vol:0.25,slide:-20}); },
     whoosh(){ noise(0.35,{freq:400,sweep:1400,q:0.8,vol:0.12,attack:0.08}); },
     win(){ [523,659,784,1047].forEach((f,i)=>tone(f,i===3?0.7:0.18,{type:'square',vol:0.08,delay:i*0.15})); fx.cheer(1.4); },

@@ -44,11 +44,17 @@ const SLOTS = ['weapon','armor','helmet','shield'];
 
 const SHOPS = {
   smith: {title:'Demirci', keeper:'Usta Brakos', slots:['weapon'], icon:'i-hammer',
-          lines:['Demir ateşteyken dövülür. Ne lazım, evlat?','Kılıcın kadar keskin ol, gladyatör.','Bu ağızlar kemik keser, emin ol.']},
+          lines:['Demir ateşteyken dövülür. Ne lazım, evlat?','Kılıcın kadar keskin ol, gladyatör.','Bu ağızlar kemik keser, emin ol.'],
+          angry:['Bir şey almadan mı? Ocağı boşuna mı yaktım!','Yine eli boş! Çekicimi kafana indirmeden git!','Bir daha gelirsen seni örsün üstünde döverim!'],
+          back:'Yine mi sen? Bu sefer bir şey alacak mısın, yoksa yine laf mı?'},
   armor: {title:'Zırhçı', keeper:'Kassia', slots:['armor','helmet'], icon:'i-helmet',
-          lines:['Her halkayı elimle ördüm. Dene bakalım.','Miğfersiz çıkan, kafasız döner.','Zırhtan tasarruf eden, kumda yatar.']},
+          lines:['Her halkayı elimle ördüm. Dene bakalım.','Miğfersiz çıkan, kafasız döner.','Zırhtan tasarruf eden, kumda yatar.'],
+          angry:['Bakıp bakıp gidenlerden misin? Tüh!','Zırhımı elleyip çıkıyorsun. Kumda yat da gör!','Kapıdan bir daha bakarsan miğferi suratına geçiririm!'],
+          back:'Ah, gene sen. Bu sefer alacaksan konuşalım.'},
   shield:{title:'Kalkancı', keeper:'Yaşlı Doruk', slots:['shield'], icon:'i-shield',
-          lines:['İyi kalkan, iyi dosttan değerlidir.','Meşe ve tunç. Kırk yıllık zanaat.','Darbe gelince arkasına saklan, utanma.']},
+          lines:['İyi kalkan, iyi dosttan değerlidir.','Meşe ve tunç. Kırk yıllık zanaat.','Darbe gelince arkasına saklan, utanma.'],
+          angry:['Gençler... Bakarlar, almazlar. Hıh!','Boyam kurudu seni beklerken! Defol!','Kalkansız arenaya çık da gör gününü, nankör!'],
+          back:'Hıh. Yine geldin. Bakalım bu sefer...'},
 };
 
 // Görünüm seçenekleri
@@ -68,7 +74,9 @@ const ARCH = {
   'Kale':{def:3,vit:3,str:1.5,atk:1,agi:0.3,cha:0.2},
   'Şovmen':{cha:3,agi:2,atk:1.5,str:1.5,def:1,vit:1},
 };
-const ARCH_CLOTH = {'Kaba Kuvvet':'#5b5a24','Düellocu':'#2b4f90','Kale':'#4e5862','Şovmen':'#7a2f6b','Şampiyon':'#1d1814'};
+const BROKE_LINE = 'Cebinde beş kuruş yokken vaktimi mi çalıyorsun?';
+const INTRO_NAMES = ['Zincirli Bran','Sefil Taro','Tutsak Mirko','Aç Doran','Kırık Diş'];
+const ARCH_CLOTH = {'Esir':'#7a6a52','Kaba Kuvvet':'#5b5a24','Düellocu':'#2b4f90','Kale':'#4e5862','Şovmen':'#7a2f6b','Şampiyon':'#1d1814'};
 const TITLES = ['Esir','Acemi','Kum Savaşçısı','Arena Kurdu','Kalabalığın Gözdesi','Şampiyon Adayı','Arena Efsanesi'];
 const SAVE_KEY = 'kumVeKilic_v1';
 const START_PTS = 10, ARENA_LEN = 9;
